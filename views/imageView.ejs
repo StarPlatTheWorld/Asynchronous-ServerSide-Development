@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Web Application</title>
+        <link rel='stylesheet' href='/public/css/style.css'>
+        <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
+    </head>
+    <body>
+        <nav class='navbar navbar-expand-lg navbar-dark bg-dark'>
+        <a class='navbar-brand' href='/'>Image Gallery Application</a>
+        <button class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation'>
+            <span class='navbar-toggler-icon'></span>
+        </button>
+        <div class='collapse navbar-collapse' id='navbarNav'>
+            <ul class='navbar-nav'>
+                <li class='nav-item'>
+                    <a class='nav-link' href='/'>Home</a>
+                </li>
+                <% if (user) { %>
+                    <li class='nav-item'>
+                        <a class='nav-link' href='/imageUpload'>Upload</a>
+                    </li>
+                    <li class='nav-item'>
+                        <a class='nav-link' href='/logout'>Logout</a>
+                    </li>
+                <% } else { %>
+                    <li class='nav-item pull-right'>
+                        <a class='nav-link' href='/login' >Login</a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+        </nav>
+        <div class='container'>
+            <h1 id='title' class='text-center'>Welcome to Image <%= image.id %></h1>
+            <div class='row'>
+                <div class='col-md-5 col-sm-5'>
+                    <div class='card-body'>
+                        <img class='card-img-top' src='/public/images/<%= image.name %>' alt='<%= image.alt %>'>
+                        <p class='card-text'>
+                            Image: <%= image.id %><br>
+                            View Count: <%= image.views %>
+                        </p>
+                    </div>
+                </div>
+                <div class='col-md-5 col-sm-5 text-center mt-md-3 mx-auto'>
+                    <div class='title'> Description: <%= image.alt %><br>Total Views: <%= image.views %>
+                        <h2 class='text-center'>User Comments</h2>
+                        <div class='card text-white bg-dark' >
+                            <% if (comments.length > 0) { %>
+                                <% comments.forEach((comment) => { %>
+                                        <div class='card-body'>
+                                            <p class='card-text mt-3 mb-3 text-left'>
+                                                <%= comment.user %>: <%= comment.comment %>
+                                            </p>
+                                        </div> 
+                                <% }); %>
+                            <% } else { %>
+                                <p class='card-text mt-3 mb-3'>
+                                    No Comments Available
+                                </p>
+                                <% }%>
+                        </div>
+                        <br>
+                        <div class='card text-white bg-dark'>
+                            <h5 class='text-center'>Leave A Comment</h5>
+                            <% if (!user) { %>
+                                <p class='card-text'>You Must Login To Comment</p>
+                            <% } %>
+                            <form method='post' action='/imageView/<%= image.id %>/comments'>
+                                <div class='form-group mb-3 text-left ml-3 mr-3'>
+                                    <textarea type='text' class='form-control' name='imageComment' placeholder='Comment' <%= user ? '' : 'disabled' %>></textarea>
+                                    <br>
+                                    <button type='submit' class='btn btn-light btn-sm'>Post Comment</button>
+                                </div>
+                            </form>
+                        </div>
+                        <br>
+                        <% if (user?.admin) { %>
+                            <div class='card text-white bg-dark'>
+                                <h5 class='text-center'>Administration</h5>
+                                    <form method='post' action='/imageView/<%= image.id %>'>
+                                        <div class='form-group mb-3 text-left ml-3 mr-3'>
+                                            <input type='text' class='form-control' name='imgDesc' placeholder='Update Image Alt...'>
+                                            <br>
+                                            <button type='submit' class='btn btn-light btn-sm'>Update Image</button>
+                                        </div>
+                                    </form>
+                                    <form method='post' action='/imageView/<%= image.id %>/delete'>
+                                        <div class='form-group mb-3 text-left ml-3 mr-3'>
+                                            <br>
+                                            <button type='submit' class='btn btn-light btn-sm'>Delete Image</button>
+                                        </div>
+                                    </form>
+                            <% } %>
+                            </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+        <script src='https://code.jquery.com/jquery-3.5.1.slim.min.js'></script>
+        <script src='https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js'></script>
+        <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'></script>
+    </body>
+</html>
